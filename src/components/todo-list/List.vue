@@ -14,18 +14,17 @@
 <script>
 import NewTodo from './NewTodo'
 import Todo from './Todo'
+import {mapState} from "vuex";
 
 export default {
   data: () => {
     return  {
-      todos: [
-        { id: 1, status: 'active', title: 'first title' },
-        { id: 2, status: 'active', title: 'second title' },
-        { id: 3, status: 'done', title: 'third title' },
-      ],
       newTodo: { status: 'active', title: '' },
     }
   },
+  computed: mapState({
+    todos: state => state.todos,
+  }),
   components: {
     NewTodo: NewTodo,
     Todo: Todo,
@@ -35,11 +34,10 @@ export default {
       const lastId = this.todos.reduce(
           (lastId, todo) => todo.id > lastId? todo.id: lastId
       )
-      this.todos.push({...todo, id: lastId + 1});
+      this.$store.commit('addTodo', { ...todo, id: lastId + 1 });
     },
     editTodo(todo) {
-      const i = this.todos.indexOf(todo)
-      this.todos.splice(i, 1);
+      this.$store.commit('remove', { todo })
 
       this.newTodo = todo
     }
